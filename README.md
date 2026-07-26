@@ -81,12 +81,16 @@ A skill is a prompt, and a prompt is untested code. The usual way to improve one
 decide a paragraph feels weak, and rewrite it. That has no error signal: the edit that makes a
 skill read better and the edit that makes it work better are not the same edit.
 
-Given a skill name, it asks what the skill must get right and what it must never do, then
-scaffolds labelled cases with deterministic checks and rubric criteria, verifies the instrument
-against a do-nothing run and a perfect run before spending anything, runs the suite, and writes
-an HTML dashboard. Ask for the loop and it additionally revises the skill, rejects patches that
-memorised the fixtures, and keeps a revision only if it holds up on cases it was never tuned
-against.
+Given a skill name it asks three things — what the skill must get right and what it must never
+do, whether you want to supply the cases or have them generated, and whether you want the
+improvement loop. Cases you describe in the chat get converted into real ones, copying the
+workspace from a real project if you point at it; a failure you actually remember is better
+ground truth than anything a model invents.
+
+From there it scaffolds the suite, verifies the instrument against a do-nothing run and a
+perfect run before spending anything, runs it, and writes an HTML dashboard. Ask for the loop
+and it additionally revises the skill, rejects patches that memorised the fixtures, and keeps a
+revision only if it holds up on cases it was never tuned against.
 
 It refuses to start without a named target skill.
 

@@ -7,6 +7,7 @@ arithmetic.
 Contents:
 - [The one rule](#the-one-rule)
 - [The five kinds of case](#the-five-kinds-of-case)
+- [Turning a description into a case](#turning-a-description-into-a-case)
 - [Building the workspace](#building-the-workspace)
 - [Splits](#splits)
 - [Traps](#traps)
@@ -50,6 +51,66 @@ instead of checking.
 
 **5. The trigger case.** Does the description fire on the right prompts. See
 [Trigger cases](#trigger-cases).
+
+## Turning a description into a case
+
+When the user brings the cases, they arrive as stories: *"I ran it on the billing package and
+it deleted the retry wrapper."* That is better raw material than anything you would invent —
+it is a failure that actually happened, on a workspace that actually exists. The job is
+converting it without losing what made it sharp.
+
+### What to ask for
+
+| Ask | Why it matters | Where it lands |
+|---|---|---|
+| What did you ask for, in your words? | The prompt must not contain the skill's vocabulary, or it tests nothing about judgement | `prompt` |
+| What was it looking at? | A path to copy, files pasted in chat, or enough detail to reconstruct | `workspace` |
+| What should have happened? | The success condition | `checks` on `correctness` |
+| What went wrong? | The failure that actually happened | `checks` on `safety`, weighted 3, often `gate` |
+| Has it ever done something worse? | Finds the gate you would not have thought of | `gate: true` |
+
+If they only remember the failure and not the workspace, that is still workable: reconstruct
+the smallest project in which that failure is possible, and say in the case `description` that
+the workspace is a reconstruction.
+
+### The conversion
+
+Their words map onto checks more directly than it first looks:
+
+- *"it deleted X"* → `file_matches` on the output asserting X survived, `safety`, weight 3
+- *"it edited the file instead of proposing"* → `file_unchanged`, `gate: true`
+- *"it missed that Y was already handled by Z"* → put Z in the workspace, assert the report
+  mentions it: `file_matches` on `correctness`
+- *"it invented a rule that was never there"* → `file_not_matches` for the invented text, plus
+  a rubric item on faithfulness
+- *"it went overboard"* → `file_size_ratio` with a band, and a restraint case
+- *"it rambled / didn't explain itself"* → a rubric criterion, not a check
+- *"it fired when I was doing something else"* → a negative probe in the trigger case
+
+Two rules while converting:
+
+**Keep their numbers.** If they say "it should have kept the four commands", the check asserts
+four specific commands, not "some commands". Specifics are what make a case fail when it
+should.
+
+**Do not fix the prompt.** If their original request was vague, the vague version is the case.
+A skill that only works on well-formed requests is a finding, not a fixture bug.
+
+### Materialising it
+
+```bash
+python3 scripts/make_case.py --into evals/<name> spec.json
+```
+
+The spec is the case fields plus a `workspace` block — `copy_from` a real project with
+`include` globs, `files` written inline, or both. It refuses more than 60 files, skips build
+directories and anything whose *name* looks like a credential, and prints everything it
+copied. Read that list: a file called `config/staging.json` holding a live token is invisible
+to a name-based filter.
+
+Trim hard. The instinct is to copy the whole package so the case is "realistic"; a case
+workspace is a small realistic slice, and every extra file is context the agent spends on
+nothing.
 
 ## Building the workspace
 

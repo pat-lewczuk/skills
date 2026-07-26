@@ -26,16 +26,20 @@ yourself. Resolve the name to a real directory (`.claude/skills/<name>/`, `skill
 a path) and confirm `SKILL.md` exists. If the name matches nothing, list what is installed and
 stop.
 
-## Then: two questions, before building anything
+## Then: three questions, before building anything
 
-Ask both in one turn, and do not start work until they are answered.
+Ask all three in one turn, and do not start work until they are answered.
 
 1. **What does this skill have to get right, and what must it never do?** The second half
    matters more. Every skill has a failure that is expensive and one that is merely
    disappointing, and a suite that does not know the difference will happily optimise the
-   skill toward confident damage. If the user has a real incident in mind, that incident is
-   your best case.
-2. **Evaluation only, or evaluation plus an improvement loop?** Evaluation measures and
+   skill toward confident damage.
+2. **Do you want to supply the cases, or should I generate them?** Offer three ways: the user
+   describes cases, I derive them from the skill's own claims, or — usually best — the user
+   brings the one or two they care about and I fill in the rest. A case the user remembers
+   going wrong is worth more than any number I invent, because it is a failure that actually
+   happened.
+3. **Evaluation only, or evaluation plus an improvement loop?** Evaluation measures and
    reports. The loop additionally revises the skill and re-measures, accepting a revision only
    if it holds up on a holdout split. The loop costs roughly three times as much and edits a
    *copy* — nothing installed changes unless the user promotes a winner.
@@ -62,18 +66,45 @@ python3 scripts/scaffold.py --skill <name> \
 Creates `evals/<name>/` with `config.json`, a **copy** of the harness, and case skeletons. The
 copy matters: the suite keeps working after this skill is uninstalled or changed.
 
-### 3. Write the cases
+### 3. Collect the cases the user is bringing
 
-This is the work, and it does not delegate to a template. Read
-`references/designing-cases.md` before starting — it is the difference between a suite that
-measures something and a suite that congratulates the skill.
+Skip this if they asked for everything generated. Otherwise take them one at a time in the
+chat, and for each one get four things:
 
-The short version: four to eight cases, each a small realistic workspace plus a prompt.
+- **What did you ask for?** Their words, not the skill's vocabulary.
+- **What was it looking at?** A path you can copy from, files pasted here, or a description
+  you can reconstruct.
+- **What should have happened?**
+- **What went wrong, if it did?** This is the valuable one. A remembered failure converts
+  directly into the highest-weighted check in the suite.
+
+Ask for the whole set before building any of them — the checks are easier to write once you
+can see which cases overlap. `references/designing-cases.md` § *Turning a description into a
+case* has the mapping from what people say to what a check asserts.
+
+Then convert each one:
+
+```bash
+python3 scripts/make_case.py --into evals/<name> spec.json
+```
+
+The spec is the case fields plus a `workspace` block that either copies from a real project or
+writes files inline. When copying from a real project, **read the file list it prints** — it
+skips things that look like credentials by name, which is not the same as by content.
+
+### 4. Fill in the rest
+
+Whatever the user did not supply, you write. Read `references/designing-cases.md` first — it
+is the difference between a suite that measures something and a suite that congratulates the
+skill.
+
+The short version: four to eight cases total, each a small realistic workspace plus a prompt.
 At least one case where the right answer is **do almost nothing**, at least one **holdout**
 the improvement loop never sees, and one **trigger** case probing the description with prompts
-that should fire it and adjacent ones that should not.
+that should fire it and adjacent ones that should not. If the user's own cases already cover
+some of those roles, say which, and add only what is missing.
 
-### 4. Write the checks
+### 5. Write the checks
 
 `references/scoring.md` has the check types, the metric buckets and the weighting rules. Two
 things that decide whether the suite is any good:
@@ -85,7 +116,7 @@ things that decide whether the suite is any good:
   rubric items for what a regex genuinely cannot settle, and write each criterion so two
   readers would grade it the same way.
 
-### 5. Verify the instrument before trusting it
+### 6. Verify the instrument before trusting it
 
 ```bash
 python3 harness/selftest.py
@@ -96,7 +127,7 @@ produced nothing, which must score near zero, and one built to satisfy every che
 score near one. **A case that cannot separate those two is not measuring anything** — fix it
 before spending money. Run this again after every change to a case or a check.
 
-### 6. Run and grade
+### 7. Run and grade
 
 ```bash
 python3 harness/run.py                 # costs money: one agent per case
@@ -106,14 +137,14 @@ python3 harness/grade.py runs/<id>     # free, re-runnable after editing checks
 Grading is separate from running on purpose: rebuilding a check never means paying for the
 agent runs again.
 
-### 7. Read the failures before believing them
+### 8. Read the failures before believing them
 
 Open the failing cases and look at what the skill actually produced. Roughly a third of first
 failures are the eval being wrong, not the skill — a check whose regex is too tight, a rubric
 criterion that punishes a defensible choice, a fixture that made the task impossible. **Fix
 the case and say that you did.** An eval that is never wrong is an eval nobody checked.
 
-### 8. Report
+### 9. Report
 
 ```bash
 python3 harness/report_html.py         # -> results.html
@@ -124,7 +155,7 @@ Then write the summary in the chat: the score, the two or three weakest areas wi
 evidence behind them, what you fixed in the eval itself, and what you would change in the
 skill. Numbers without the "so what" are not a report.
 
-### 9. Only if the user asked for the loop
+### 10. Only if the user asked for the loop
 
 ```bash
 python3 harness/loop.py --iterations 2
@@ -147,5 +178,7 @@ Never promote without showing the user the diff and the scoreboard row that just
 ## Scripts
 
 - `scripts/scaffold.py` — create a suite for a skill.
+- `scripts/make_case.py` — turn a case spec into a real case directory, copying workspace
+  files from a project or writing them inline.
 - `scripts/harness/` — the harness that gets copied into it: `run`, `grade`, `selftest`,
   `improve`, `loop`, `report_html`, `screenshot.sh`. Stdlib only.

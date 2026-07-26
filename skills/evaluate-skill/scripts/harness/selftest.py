@@ -32,6 +32,11 @@ ROOT = Path(__file__).resolve().parent.parent
 NULL_MAX = 0.40
 ORACLE_MIN = 0.80
 
+# Check types that demand the skill actually did something. A case built only from the
+# others — "did not touch X", "does not contain Y" — is passed by an agent that never ran.
+PRODUCING = {"file_exists", "file_matches", "file_changed", "output_matches", "command",
+             "json_valid", "file_size_ratio", "skill_fired", "tool_used"}
+
 
 def sample_for(pattern: str) -> str | None:
     """A string that matches `pattern`, for simple patterns. None when unsure.
@@ -194,6 +199,12 @@ def main() -> int:
             continue
         if not case.get("checks") and not case.get("rubric"):
             problems.append(f"{case['id']}: no checks and no rubric")
+        if not any(k.get("type") in PRODUCING for k in case.get("checks", [])) \
+                and not case.get("rubric"):
+            problems.append(
+                f"{case['id']}: nothing requires the skill to produce anything. Checks like "
+                f"file_unchanged and file_not_matches are satisfied by an agent that did "
+                f"nothing at all — pair them with a file_exists or file_matches")
         for spec in case.get("checks", []):
             for err in CH.validate_spec(spec):
                 problems.append(f"{case['id']}/{spec.get('id', '?')}: {err}")
