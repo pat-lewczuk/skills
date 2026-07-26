@@ -72,6 +72,29 @@ Figures are the `len/4` estimate `analyze.py` uses. Files this dense with backti
 flags tokenize worse than plain prose, so treat the absolutes as ±15%; the ratios hold. Each
 audit cost $0.73–$1.04 and 13–18 turns to produce.
 
+### evaluate-skill
+
+Builds an eval suite for another skill, runs it, and reports — optionally with a loop that
+revises the skill from its own failures.
+
+A skill is a prompt, and a prompt is untested code. The usual way to improve one is to read it,
+decide a paragraph feels weak, and rewrite it. That has no error signal: the edit that makes a
+skill read better and the edit that makes it work better are not the same edit.
+
+Given a skill name, it asks what the skill must get right and what it must never do, then
+scaffolds labelled cases with deterministic checks and rubric criteria, verifies the instrument
+against a do-nothing run and a perfect run before spending anything, runs the suite, and writes
+an HTML dashboard. Ask for the loop and it additionally revises the skill, rejects patches that
+memorised the fixtures, and keeps a revision only if it holds up on cases it was never tuned
+against.
+
+It refuses to start without a named target skill.
+
+```bash
+python3 scripts/scaffold.py --skill my-skill --case happy:train --case restraint:train \
+  --case unseen:holdout --case triggers:train:trigger
+```
+
 ## Evals
 
 `evals/eliminate-no-op/` holds the eval suite for that skill: eight labelled cases, weighted
