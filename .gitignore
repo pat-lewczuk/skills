@@ -31,3 +31,6 @@ dist/
 
 # Logs
 *.log
+
+# Skill output (generated when running analyze.py locally)
+analysis.json
