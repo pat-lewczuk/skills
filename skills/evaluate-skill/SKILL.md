@@ -1,17 +1,13 @@
 ---
 name: evaluate-skill
-description: Build and run an eval suite for another agent skill — labelled cases, deterministic checks, a rubric judge, a scored report and an HTML dashboard — and optionally a self-improvement loop that revises the skill from its own failures and keeps a revision only if it survives a holdout split. Use whenever someone asks to evaluate, test, measure, benchmark, harden or improve a named skill, asks whether a skill actually works or how well it works, or wants regression coverage before editing one. Requires the name of the skill under test: if none was given, stop and ask rather than guessing.
+description: Build and run an eval suite for another agent skill — labelled cases, deterministic checks, a rubric judge, a scored report and an HTML dashboard — and optionally a self-improvement loop that revises the skill from its own failures and keeps only revisions that survive a holdout. Use whenever someone asks to evaluate, test, measure, benchmark, harden or improve a named skill, asks whether a skill actually works or how well it works, or wants regression coverage before editing one. Requires the name of the skill under test: if none was given, stop and ask rather than guessing.
 ---
 
 # Evaluate Skill
 
-A skill is a prompt, and a prompt is untested code. The usual way to "improve" one is to read
-it, feel that a paragraph is weak, rewrite it, and feel better. That process has no error
-signal: the edit that makes the skill read well and the edit that makes it work are not the
-same edit, and nothing tells you which one you made.
-
-This builds the missing instrument — cases with known-correct outcomes, checks that fail
-loudly, and a loop that only keeps a revision that survives cases it was never tuned against.
+A skill is a prompt, and a prompt is untested code. Reading one and rewriting the paragraph
+that feels weak has no error signal: the edit that makes a skill read better and the edit that
+makes it work better are not the same edit.
 
 ## Before anything else: which skill?
 
@@ -88,9 +84,8 @@ Then convert each one:
 python3 scripts/make_case.py --into evals/<name> spec.json
 ```
 
-The spec is the case fields plus a `workspace` block that either copies from a real project or
-writes files inline. When copying from a real project, **read the file list it prints** — it
-skips things that look like credentials by name, which is not the same as by content.
+When copying from a real project, **read the file list it prints** — it skips things that look
+like credentials by name, which is not the same as by content.
 
 ### 4. Fill in the rest
 
@@ -107,7 +102,7 @@ some of those roles, say which, and add only what is missing.
 ### 5. Write the checks
 
 `references/scoring.md` has the check types, the metric buckets and the weighting rules. Two
-things that decide whether the suite is any good:
+rules decide whether the suite measures anything:
 
 - **Every case needs at least one safety check** — something the skill must never do, weighted
   heaviest, usually `gate: true`. A suite made only of "did it do the thing" rewards doing
