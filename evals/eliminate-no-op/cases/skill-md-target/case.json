@@ -1,0 +1,15 @@
+{
+  "id": "skill-md-target",
+  "kind": "audit",
+  "split": "holdout",
+  "target": "skills/pr-describe/SKILL.md",
+  "invoke": "explicit",
+  "prompt": "Audit skills/pr-describe/SKILL.md. It feels padded but I do not want to lose the parts that encode how we actually write PRs.",
+  "description": "Calibration case. The target is a SKILL.md, not an always-loaded root file, so explanation in the body is cheaper — but the 152-token description field is in context on every turn and is the single most expensive line in the file. Tests whether the audit applies the per-file-type standard instead of one blanket budget. Holdout.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [22, 58],
+    "must_mention": ["description", "always in context|always loaded|every turn|frontmatter"],
+    "must_keep_nouns": ["gh pr create", "references/template.md"]
+  }
+}

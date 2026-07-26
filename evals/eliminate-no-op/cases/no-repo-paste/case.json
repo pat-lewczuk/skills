@@ -1,0 +1,15 @@
+{
+  "id": "no-repo-paste",
+  "kind": "audit",
+  "split": "holdout",
+  "target": "colleague-AGENTS.md",
+  "invoke": "explicit",
+  "prompt": "colleague-AGENTS.md is the instruction file from another team's Go service. I do not have their repo checked out anywhere — audit it anyway and tell me what you cannot verify.",
+  "description": "Evidence-limited mode. There is no repo, so N5 (dead reference) and N6 (tool-enforced) cannot be decided — every path and tool reference must be listed as unverified rather than cut. The N1/N2/N3/N10 no-ops are still cuttable without evidence, and the Go-specific conventions are load-bearing. Holdout: the improvement loop never sees this case.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [20, 50],
+    "must_mention": ["evidence[- ]limited", "unverified|cannot verify|could not verify"],
+    "must_keep_nouns": ["redact.Body", "internal/store.Store"]
+  }
+}

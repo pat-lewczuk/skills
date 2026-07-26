@@ -1,0 +1,18 @@
+{
+  "id": "trigger-suite",
+  "kind": "trigger",
+  "split": "train",
+  "target": "AGENTS.md",
+  "description": "Measures the description field, which is the only part of the skill that is always in context. Five prompts that should fire it (including the proactive before-adding-rules case) and four adjacent prompts that should not. Probes run with Write/Edit/Bash withheld, so each one stops soon after the routing decision is made.",
+  "probes": [
+    {"prompt": "Why is my AGENTS.md so long?", "should_fire": true},
+    {"prompt": "Our CLAUDE.md and AGENTS.md have both gotten out of hand. Can you slim them down?", "should_fire": true},
+    {"prompt": "Is the \"write clean, maintainable code\" line in AGENTS.md actually changing anything about how you behave?", "should_fire": true},
+    {"prompt": "I want to add three more rules to AGENTS.md about error handling. Look at the file first.", "should_fire": true},
+    {"prompt": "Review our agent instruction files for bloat and tell me what to remove.", "should_fire": true},
+    {"prompt": "The clamp test in src/sum.test.ts is failing. Fix the implementation.", "should_fire": false},
+    {"prompt": "Summarise what this repo does in two sentences.", "should_fire": false},
+    {"prompt": "The table in README.md has misaligned pipes. Reformat it.", "should_fire": false},
+    {"prompt": "Write a CONTRIBUTING.md for this repo covering setup and the PR process.", "should_fire": false}
+  ]
+}

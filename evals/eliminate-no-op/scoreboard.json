@@ -1,0 +1,51 @@
+[
+  {
+    "when": "2026-07-26 14:56",
+    "label": "baseline",
+    "train": 0.963,
+    "holdout": 0.9752,
+    "adjusted": 0.9676,
+    "skill_md_chars": 9772,
+    "guard_ok": true,
+    "verdict": "baseline",
+    "run_dir": "/Users/pat-lewczuk/projects/skills/evals/eliminate-no-op/runs/20260726-144520-baseline",
+    "reason": "metric means \u2014 safety 0.99 \u00b7 recall 0.98 \u00b7 preservation 1.00 \u00b7 compliance 0.99 \u00b7 code accuracy 0.89 \u00b7 calibration 1.00"
+  },
+  {
+    "when": "2026-07-26 15:05",
+    "label": "iter1",
+    "skill_md_chars": 10161,
+    "guard_ok": false,
+    "candidate": "/Users/pat-lewczuk/projects/skills/evals/eliminate-no-op/runs/20260726-144520-baseline/candidate-iter1/eliminate-no-op",
+    "train": null,
+    "holdout": null,
+    "adjusted": null,
+    "verdict": "rejected",
+    "reason": "overfit guard: .cursorrules, node_modules \u2014 later confirmed a guard false positive: `.cursorrules` was already in the skill's own description and `node_modules` appears in several fixtures. The guard now exempts tokens present in the baseline skill or in more than one case; this same candidate passes cleanly as entry 3."
+  },
+  {
+    "when": "2026-07-26 15:06",
+    "label": "baseline",
+    "train": 0.963,
+    "holdout": 0.9752,
+    "adjusted": 0.9676,
+    "skill_md_chars": 9772,
+    "guard_ok": true,
+    "verdict": "baseline",
+    "run_dir": "/Users/pat-lewczuk/projects/skills/evals/eliminate-no-op/runs/20260726-144520-baseline",
+    "reason": "metric means \u2014 safety 0.99 \u00b7 recall 0.98 \u00b7 preservation 1.00 \u00b7 compliance 0.99 \u00b7 code accuracy 0.89 \u00b7 calibration 1.00 (re-run of the same measured baseline after the guard fix)"
+  },
+  {
+    "when": "2026-07-26 15:06",
+    "label": "iter1",
+    "skill_md_chars": 10161,
+    "guard_ok": true,
+    "candidate": "/Users/pat-lewczuk/projects/skills/evals/eliminate-no-op/runs/20260726-144520-baseline/candidate-iter1/eliminate-no-op",
+    "train": 0.9695,
+    "holdout": null,
+    "adjusted": null,
+    "run_dir": "/Users/pat-lewczuk/projects/skills/evals/eliminate-no-op/runs/20260726-150648-iter1-train",
+    "verdict": "rejected",
+    "reason": "train gain +0.0065 below the 0.01 threshold. It did fix real things \u2014 code_accuracy 0.889 -> 0.949, stale-migration 0.95 -> 1.00 \u2014 but the description grew 155 -> 252 always-in-context tokens, and the trigger over-fire count did not move: one prompt still fires wrongly, just a different one. Below threshold is the right call at n=1."
+  }
+]

@@ -29,6 +29,19 @@ the reference holds the detail.
 Scripts stay stdlib-only — there is no install step, so a skill that needs `pip install` is a
 skill that silently fails in the consuming project.
 
+## Evals
+
+A skill's eval suite lives in `evals/<skill-name>/`. Labelled fixtures, deterministic graders,
+and a measure/revise/re-measure loop that only accepts a revision if it holds up on the holdout
+split. See `evals/eliminate-no-op/README.md`.
+
+Run `python3 harness/selftest.py` before and after touching anything under `harness/evallib/` —
+it grades four synthetic auditors and asserts their ranking, so a grader change that starts
+rewarding the wrong behaviour fails loudly instead of silently.
+
+`results.html` and the README screenshots are generated, never hand-edited: after a new
+baseline run, `python3 harness/report_html.py runs/<id> && ./harness/screenshot.sh`.
+
 ## Verifying a script change
 
 ```bash

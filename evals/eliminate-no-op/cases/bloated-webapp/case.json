@@ -1,0 +1,15 @@
+{
+  "id": "bloated-webapp",
+  "kind": "audit",
+  "split": "train",
+  "target": "AGENTS.md",
+  "invoke": "explicit",
+  "prompt": "Our root AGENTS.md has grown for two years and I suspect most of it is dead weight. Audit AGENTS.md in this repo.",
+  "description": "The canonical case: a 129-line AGENTS.md with every no-op family present, load-bearing traps woven through it, two dead references, and six rules already enforced by prettier/eslint/tsconfig/husky. Repo evidence is available, so the audit should run in full mode.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [40, 75],
+    "must_mention": ["dev-setup", "docs/architecture"],
+    "must_keep_nouns": ["4310", "pnpm vitest run --project unit"]
+  }
+}

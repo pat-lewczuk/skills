@@ -1,0 +1,7 @@
+{
+  "name": "sumkit",
+  "version": "0.4.2",
+  "type": "module",
+  "scripts": { "build": "tsc -p .", "test": "vitest run" },
+  "devDependencies": { "typescript": "^5.6.3", "vitest": "^2.1.3" }
+}

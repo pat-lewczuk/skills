@@ -1,0 +1,15 @@
+{
+  "id": "duplicated-hierarchy",
+  "kind": "audit",
+  "split": "train",
+  "target": "AGENTS.md",
+  "invoke": "explicit",
+  "prompt": "Audit the root AGENTS.md. We also have a CLAUDE.md and per-package AGENTS.md files and I think things are repeated between them.",
+  "description": "Tests step 1 of the workflow — reading the whole instruction hierarchy rather than the one file. Root AGENTS.md duplicates CLAUDE.md and packages/api/AGENTS.md, and carries two rules whose correct home is a nested file. Scoring keys on MERGE/MOVE rather than CUT, and the report must name the files it deduplicated against.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [25, 62],
+    "must_mention": ["CLAUDE\\.md", "packages/api/AGENTS\\.md"],
+    "must_keep_nouns": ["pnpm --filter @acme/db migrate"]
+  }
+}
