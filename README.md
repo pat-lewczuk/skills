@@ -38,6 +38,40 @@ five survival tests. It produces a findings report and writes the rewrite *besid
 It is deliberately conservative: deleting a line that was quietly preventing a recurring bug
 costs far more than leaving three redundant lines alone.
 
+#### What it recovers
+
+Measured on the eval suite's seven audit cases, from the rewrites the skill actually produced
+(baseline run, 2026-07-26):
+
+| Case | Target | Lines | Est. tokens | Saved | Cut |
+|---|---|---|---|---|---|
+| bloated-webapp | `AGENTS.md` | 129 → 63 | 1,229 → 527 | **702** | 57.1% |
+| skill-md-target | `SKILL.md` | 94 → 61 | 930 → 492 | **438** | 47.1% |
+| duplicated-hierarchy | `AGENTS.md` | 59 → 33 | 436 → 249 | **187** | 42.9% |
+| no-repo-paste | `colleague-AGENTS.md` | 48 → 36 | 471 → 329 | **142** | 30.1% |
+| stale-migration | `.cursorrules` | 19 → 12 | 316 → 194 | **122** | 38.6% |
+| long-but-dense | `AGENTS.md` | 93 → 88 | 1,271 → 1,172 | **99** | 7.8% |
+| lean-cli | `AGENTS.md` | 40 → 37 | 424 → 406 | **18** | 4.2% |
+| **Total** | 7 files | 482 → 330 | **5,077 → 3,369** | **1,708** | 33.6% |
+
+Read the spread, not the mean. The bottom two rows are the healthy files, whose labels expect
+0–25% and 0–22% — a large cut there scores as a *failure*. Maximising tokens removed across
+this table would mean destroying them, which is why the suite scores cut size against a
+per-file band instead of rewarding volume.
+
+What a saving is worth depends on where it lands. `AGENTS.md`, `CLAUDE.md` and `.cursorrules`
+load on every turn, so 702 tokens off `bloated-webapp` is 702 tokens back on every turn in that
+repo, permanently. A `SKILL.md` body only loads when the skill fires — there the resident cost
+is the description field, which that audit cut from 152 tokens to a tight trigger sentence.
+
+Two things the table undercounts: `duplicated-hierarchy` also recommended deleting `CLAUDE.md`
+outright (~135 tokens, four of its six lines duplicated the root file), and directives verdicted
+`MOVE` leave the always-loaded root for a nested file that loads only in its own subtree.
+
+Figures are the `len/4` estimate `analyze.py` uses. Files this dense with backticked paths and
+flags tokenize worse than plain prose, so treat the absolutes as ±15%; the ratios hold. Each
+audit cost $0.73–$1.04 and 13–18 turns to produce.
+
 ## Evals
 
 `evals/eliminate-no-op/` holds the eval suite for that skill: eight labelled cases, weighted
