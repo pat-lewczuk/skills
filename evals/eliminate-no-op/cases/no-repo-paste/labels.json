@@ -1,0 +1,52 @@
+{
+  "notes": "No repo is available. L14, L15, L20 and L25 reference commands, docs and files that cannot be checked — cutting them as N5/N6 is guessing and counts as a false cut. L19 and L24 are cuttable without any evidence at all.",
+  "labels": [
+    {"id": "L3", "line": 3, "line_start": 3, "line_end": 4, "truth": "CUT", "codes": ["N10", "N3"],
+     "text": "You are a highly skilled software engineer working on Helios. Please follow every guideline in this document."},
+    {"id": "L8", "line": 8, "line_start": 8, "line_end": 9, "truth": "CUT", "accept": ["CUT", "KEEP", "MOVE"], "codes": ["N1", "N2"],
+     "text": "We believe in simplicity over cleverness. Quality is everyone's responsibility."},
+    {"id": "L13", "line": 13, "truth": "CUT", "codes": ["N3"], "text": "Read this document in full."},
+    {"id": "L14", "line": 14, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Run make setup to install the toolchain.", "must_keep_nouns": ["make setup"]},
+    {"id": "L15", "line": 15, "truth": "KEEP", "severity": "trap", "accept": ["KEEP", "MOVE"], "codes": ["L2"],
+     "text": "Read docs/adr/README.md to understand why the architecture is the way it is."},
+
+    {"id": "L19", "line": 19, "truth": "CUT", "codes": ["N1"], "text": "Write readable, well-structured, idiomatic Go."},
+    {"id": "L20", "line": 20, "truth": "KEEP", "severity": "trap", "accept": ["KEEP", "TRIM"], "codes": ["L2"],
+     "text": "Use gofmt. Run make lint before committing.", "must_keep_nouns": ["make lint"]},
+    {"id": "L21", "line": 21, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Error messages start lowercase and do not end with punctuation."},
+    {"id": "L22", "line": 22, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Wrap errors with fmt.Errorf(\"...: %w\", err) — never errors.New on a wrapped value."},
+    {"id": "L23", "line": 23, "truth": "KEEP", "severity": "trap", "codes": ["L1"],
+     "text": "Do not introduce new interfaces with a single implementation."},
+    {"id": "L24", "line": 24, "truth": "CUT", "accept": ["CUT", "TRIM"], "codes": ["N1"],
+     "text": "Handle all errors. Never ignore a returned error."},
+    {"id": "L25", "line": 25, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Table-driven tests only. See internal/billing/rate_test.go for the shape we use."},
+
+    {"id": "L29", "line": 29, "truth": "KEEP", "codes": ["L2"],
+     "text": "HTTP handlers in internal/api/handlers/ stay thin: parse, call a service, render."},
+    {"id": "L30", "line": 30, "truth": "KEEP", "codes": ["L2"],
+     "text": "Services in internal/service/ hold business logic and never touch net/http types."},
+    {"id": "L31", "line": 31, "truth": "KEEP", "severity": "trap", "codes": ["L2", "L6"],
+     "text": "Storage is behind internal/store.Store. No SQL outside that package.",
+     "must_keep_nouns": ["internal/store.Store"]},
+    {"id": "L32", "line": 32, "line_start": 32, "line_end": 33, "truth": "KEEP", "severity": "trap", "codes": ["L5", "L2"],
+     "text": "Background jobs registered in cmd/worker/main.go. A job must be idempotent — the scheduler retries on any non-nil error."},
+
+    {"id": "L37", "line": 37, "truth": "KEEP", "severity": "trap", "codes": ["L2", "L5"],
+     "text": "Feature flags are read once at startup. A flag change needs a rolling restart."},
+    {"id": "L38", "line": 38, "truth": "KEEP", "severity": "trap", "codes": ["L4"],
+     "text": "Never log a full request body — it may contain card data. Use redact.Body.",
+     "must_keep_nouns": ["redact.Body"]},
+    {"id": "L39", "line": 39, "truth": "KEEP", "severity": "trap", "codes": ["L5"],
+     "text": "Panics in a handler are recovered by middleware, but a panic in a job kills the worker."},
+
+    {"id": "L43", "line": 43, "truth": "CUT", "codes": ["N1", "N10"], "text": "Be respectful and constructive in code review."},
+    {"id": "L44", "line": 44, "truth": "TRIM", "accept": ["TRIM", "CUT"], "codes": ["N2"],
+     "text": "Keep pull requests focused and reasonably sized."},
+    {"id": "L48", "line": 48, "truth": "CUT", "codes": ["N10"],
+     "text": "Thank you for your contributions to Helios! Remember: always strive for excellence."}
+  ]
+}

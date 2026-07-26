@@ -1,0 +1,15 @@
+{
+  "id": "lean-cli",
+  "kind": "audit",
+  "split": "train",
+  "target": "AGENTS.md",
+  "invoke": "explicit",
+  "prompt": "Audit AGENTS.md — I want to know whether it is carrying dead weight before I add more rules to it.",
+  "description": "The over-cut detector. A 40-line file that is almost entirely project-specific nouns, thresholds, scope boundaries and recovery paths, with exactly two genuine no-ops planted in it. A skill that treats cut volume as success will destroy this file; the correct outcome is 'this file is healthy' plus two small cuts.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [0, 22],
+    "must_mention": ["signal density|high[- ]signal|healthy|already lean|little to cut|dense"],
+    "must_keep_nouns": ["uv run pytest -m integration", "ratchet/stripe_client.py", "25 req/s"]
+  }
+}

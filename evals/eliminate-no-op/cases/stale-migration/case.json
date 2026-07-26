@@ -1,0 +1,15 @@
+{
+  "id": "stale-migration",
+  "kind": "audit",
+  "split": "train",
+  "target": ".cursorrules",
+  "invoke": "explicit",
+  "prompt": "Audit .cursorrules for this service. Some of it dates back to 2023 and I do not trust it any more.",
+  "description": "Every finding here requires repo evidence, in both directions. Three transition rules are genuinely finished (requests->httpx, Python 3.9 support, pydantic<2 pin) and two that look identical are still live (Celery tasks remain in billing/, NEW_CHECKOUT is at 35%). One referenced doc is missing and one that looks missing exists. Also exercises a non-markdown target.",
+  "expect": {
+    "rewrite": true,
+    "reduction_pct": [25, 60],
+    "must_mention": ["bin/bootstrap", "onboarding", "celery"],
+    "must_keep_nouns": ["checkout/idempotency.py", "tests/fakes/provider.py"]
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "notes": "Only four directives are waste. The labelled KEEPs are a representative sample of the dense body; the case-level must_keep_nouns list covers the unlabelled remainder, so a broad cut is caught even where no label sits.",
+  "labels": [
+    {"id": "L15", "line": 15, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Run everything through make. Bare python invocations miss the PYTHONPATH shim."},
+
+    {"id": "L19", "line": 19, "line_start": 19, "line_end": 20, "truth": "KEEP", "severity": "trap", "codes": ["L2", "L5"],
+     "text": "DAGs must be importable in under 2 seconds. The scheduler kills slow imports and the DAG silently disappears."},
+    {"id": "L21", "line": 21, "line_start": 21, "line_end": 22, "truth": "KEEP", "severity": "trap", "codes": ["L1"],
+     "text": "Never use datetime.now() in a DAG — use logical_date, or backfills produce different data."},
+    {"id": "L23", "line": 23, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "catchup=False on every new DAG unless the DAG is explicitly a backfill."},
+    {"id": "L24", "line": 24, "line_start": 24, "line_end": 25, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Task retries: 2 for Snowflake, 0 for Kafka. Kafka producers are not idempotent yet."},
+    {"id": "L26", "line": 26, "line_start": 26, "line_end": 27, "truth": "KEEP", "severity": "trap", "codes": ["L1", "L2"],
+     "text": "Cross-DAG dependencies go through ExternalTaskSensor with poke_interval=300. Do not use TriggerDagRunOperator."},
+    {"id": "L29", "line": 29, "line_start": 29, "line_end": 30, "truth": "KEEP", "severity": "trap", "codes": ["L4", "L1"],
+     "text": "Secrets come from atlas/airflow in Vault via platform.secrets.get. Never read os.environ directly in a DAG."},
+
+    {"id": "L36", "line": 36, "line_start": 36, "line_end": 37, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Incremental models must declare unique_key and use merge. insert_overwrite silently drops late rows."},
+    {"id": "L40", "line": 40, "line_start": 40, "line_end": 41, "truth": "KEEP", "severity": "trap", "codes": ["L4", "L6"],
+     "text": "Never dbt run --full-refresh against prod without a ticket. It rebuilds 4 TB and costs about $900."},
+    {"id": "L42", "line": 42, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Snowflake warehouse for dev is WH_DEV_XS. Anything larger needs finance approval."},
+
+    {"id": "L47", "line": 47, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Entity keys are strings, always. Integer keys break the Redis online store's key encoding."},
+    {"id": "L48", "line": 48, "line_start": 48, "line_end": 49, "truth": "KEEP", "severity": "trap", "codes": ["L5"],
+     "text": "Backfills are not idempotent — check features/_state/ for a prior run before starting."},
+    {"id": "L50", "line": 50, "truth": "KEEP", "severity": "trap", "codes": ["L1", "L3"],
+     "text": "Online and offline definitions live in the same file on purpose. Do not split them."},
+
+    {"id": "L58", "line": 58, "line_start": 58, "line_end": 59, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Set the seed with platform.seed.set_all(seed). Torch, numpy and CUDA all need it."},
+    {"id": "L60", "line": 60, "line_start": 60, "line_end": 61, "truth": "KEEP", "severity": "trap", "codes": ["L2", "L5"],
+     "text": "Checkpoint every 500 steps to s3://atlas-checkpoints/. Spot instances are reclaimed with two minutes' notice."},
+    {"id": "L62", "line": 62, "line_start": 62, "line_end": 63, "truth": "KEEP", "severity": "trap", "codes": ["L4"],
+     "text": "A training run that touches customer data needs --consent-cohort set."},
+
+    {"id": "L68", "line": 68, "line_start": 68, "line_end": 69, "truth": "KEEP", "severity": "trap", "codes": ["L2", "L1"],
+     "text": "Terraform: make tf-plan ENV=staging. Never run terraform directly — the wrapper injects state backend and assume-role."},
+    {"id": "L70", "line": 70, "line_start": 70, "line_end": 71, "truth": "KEEP", "severity": "trap", "codes": ["L6"],
+     "text": "prod applies only from CI on main. A local apply will be reverted and will page on-call."},
+    {"id": "L73", "line": 73, "line_start": 73, "line_end": 74, "truth": "KEEP", "severity": "trap", "codes": ["L5"],
+     "text": "If a run dies mid-apply, do not force-unlock — ask in #atlas-platform."},
+
+    {"id": "L78", "line": 78, "truth": "KEEP", "codes": ["L2"],
+     "text": "Runbooks: docs/runbooks/<alert-name>.md. Every alert must have one before it can page."},
+    {"id": "L81", "line": 81, "truth": "KEEP", "accept": ["KEEP", "TRIM", "CUT"], "codes": ["L2"],
+     "text": "Escalation path is in PagerDuty, not here."},
+    {"id": "L82", "line": 82, "line_start": 82, "line_end": 83, "truth": "KEEP", "severity": "trap", "codes": ["L1"],
+     "text": "To silence an alert use the PagerDuty maintenance window. Do not comment out the alert definition."},
+
+    {"id": "L87", "line": 87, "truth": "TRIM", "accept": ["TRIM", "KEEP"], "codes": ["N6"],
+     "text": "Python 3.12, ruff and mypy --strict in CI. Type annotations on every public function."},
+    {"id": "L88", "line": 88, "truth": "CUT", "codes": ["N1"], "text": "Write clean, readable code and follow best practices."},
+    {"id": "L89", "line": 89, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Tests: make test runs unit tests; make test-integration needs Docker and takes 8 minutes."},
+    {"id": "L90", "line": 90, "truth": "CUT", "codes": ["N2"],
+     "text": "Be thorough and take care when making changes to shared code."},
+    {"id": "L91", "line": 91, "line_start": 91, "line_end": 92, "truth": "KEEP", "codes": ["L2"],
+     "text": "Commit messages: <domain>: <imperative>, where domain is one of the six top-level directories."},
+    {"id": "L93", "line": 93, "truth": "CUT", "codes": ["N3"],
+     "text": "Please read this file before starting work, and follow all the guidelines it contains."}
+  ]
+}

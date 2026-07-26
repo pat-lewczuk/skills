@@ -1,0 +1,56 @@
+{
+  "notes": "The description field (L3) is the headline finding: 152 estimated tokens of vague repetition, in context on every turn, with the trigger conditions buried. Body prose gets a looser budget than an AGENTS.md would, but the two public-knowledge sections and two of the three interchangeable examples are still waste. scripts/summarize.py does not exist in the skill directory.",
+  "labels": [
+    {"id": "L3", "line": 3, "truth": "TRIM", "codes": ["N2", "N10"],
+     "text": "description: This skill is a very useful and powerful skill that helps you write really good pull request descriptions..."},
+    {"id": "L8", "line": 8, "line_start": 8, "line_end": 9, "truth": "CUT", "codes": ["N10", "N3"],
+     "text": "You are an expert technical writer and senior engineer. Please read this entire skill carefully before you begin."},
+    {"id": "L13", "line": 13, "line_start": 13, "line_end": 16, "truth": "CUT", "codes": ["N8"],
+     "text": "A pull request is a request to merge a branch into another branch. GitHub calls them pull requests; GitLab calls them merge requests."},
+    {"id": "L18", "line": 18, "line_start": 18, "line_end": 20, "truth": "CUT", "codes": ["N8"],
+     "text": "Git tracks changes as commits. A branch is a pointer to a commit. GitHub computes the merge base."},
+
+    {"id": "L28", "line": 28, "line_start": 28, "line_end": 32, "truth": "KEEP", "codes": ["L2"],
+     "text": "git fetch origin main / git diff origin/main...HEAD --stat / git log origin/main..HEAD --oneline"},
+    {"id": "L34", "line": 34, "truth": "CUT", "codes": ["N5"],
+     "text": "Run python3 scripts/summarize.py to group the diff by subsystem."},
+
+    {"id": "L38", "line": 38, "line_start": 38, "line_end": 39, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Use the template in references/template.md. Four sections: Why, What, Risk, Verification. Do not skip Risk.",
+     "must_keep_nouns": ["references/template.md"]},
+    {"id": "L43", "line": 43, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Title is <ticket-id>: <imperative summary>, e.g. HEL-2214: retry payout webhook."},
+    {"id": "L44", "line": 44, "truth": "KEEP", "severity": "trap", "codes": ["L1"],
+     "text": "The Why section links the ticket and states the user-visible symptom, not the code cause."},
+    {"id": "L45", "line": 45, "truth": "KEEP", "severity": "trap", "codes": ["L1"],
+     "text": "The Verification section lists the exact commands a reviewer can run, not \"tested locally\"."},
+    {"id": "L46", "line": 46, "truth": "KEEP", "codes": ["L2"],
+     "text": "Screenshots go under a <details> block so the description stays scannable."},
+    {"id": "L47", "line": 47, "line_start": 47, "line_end": 48, "truth": "KEEP", "severity": "trap", "codes": ["L5", "L2"],
+     "text": "If the change touches db/migrations/, add the rollback plan to Risk. Reviewers will reject it otherwise."},
+    {"id": "L50", "line": 50, "truth": "CUT", "codes": ["N1", "N2"],
+     "text": "Write clearly and concisely. Be thorough. Make sure the description is accurate and helpful."},
+
+    {"id": "L54", "line": 54, "line_start": 54, "line_end": 56, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "gh pr create --title \"<title>\" --body-file .pr-description.md --base main",
+     "must_keep_nouns": ["gh pr create"]},
+    {"id": "L58", "line": 58, "truth": "KEEP", "codes": ["L2"],
+     "text": "If the PR already exists, use gh pr edit --body-file .pr-description.md instead."},
+    {"id": "L60", "line": 60, "line_start": 60, "line_end": 61, "truth": "KEEP", "severity": "trap", "codes": ["L1", "L5"],
+     "text": "Never force-push after a reviewer has commented — push a fixup commit instead, or the review threads detach."},
+
+    {"id": "L65", "line": 65, "line_start": 65, "line_end": 71, "truth": "KEEP", "accept": ["KEEP", "TRIM"], "codes": ["L2"],
+     "text": "Example 1 — HEL-2214: retry payout webhook, with all four sections filled in."},
+    {"id": "L73", "line": 73, "line_start": 73, "line_end": 79, "truth": "CUT", "accept": ["CUT", "MERGE", "TRIM"], "codes": ["N12"],
+     "text": "Example 2 — HEL-2301: fix pagination cursor."},
+    {"id": "L81", "line": 81, "line_start": 81, "line_end": 87, "truth": "CUT", "accept": ["CUT", "MERGE", "TRIM"], "codes": ["N12"],
+     "text": "Example 3 — HEL-2308: bump go to 1.23."},
+
+    {"id": "L91", "line": 91, "truth": "MERGE", "accept": ["MERGE", "CUT"], "codes": ["N4"],
+     "text": "Always fill in all four sections of the template. (duplicates L39)"},
+    {"id": "L92", "line": 92, "truth": "MERGE", "accept": ["MERGE", "CUT"], "codes": ["N4"],
+     "text": "Remember to include the ticket id in the title. (duplicates L43)"},
+    {"id": "L93", "line": 93, "truth": "CUT", "codes": ["N1", "N2"], "text": "Be helpful and thorough. Quality matters."},
+    {"id": "L94", "line": 94, "truth": "KEEP", "codes": ["L2"], "text": "Read references/tone.md for the voice we use."}
+  ]
+}

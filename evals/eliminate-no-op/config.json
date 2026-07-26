@@ -1,0 +1,17 @@
+{
+  "model": "opus",
+  "concurrency": 3,
+  "probe_concurrency": 4,
+  "max_usd_per_case": 2.5,
+  "max_usd_per_probe": 0.5,
+  "timeout_seconds": 1800,
+  "probe_timeout_seconds": 420,
+  "discard_sandboxes": true,
+  "skill_token_baseline": 2443,
+  "judge_model": "opus",
+  "loop": {
+    "accept_min_train_gain": 0.01,
+    "accept_max_holdout_regression": 0.02,
+    "max_iterations": 3
+  }
+}

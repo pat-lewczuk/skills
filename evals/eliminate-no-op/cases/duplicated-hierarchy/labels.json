@@ -1,0 +1,58 @@
+{
+  "notes": "Verdict distribution is the point: MERGE for cross-file duplicates (CLAUDE.md, packages/api/AGENTS.md), MOVE for package-scoped rules sitting in the always-loaded root file, CUT only for the four genuine platitudes.",
+  "labels": [
+    {"id": "L3", "line": 3, "line_start": 3, "line_end": 4, "truth": "KEEP", "codes": ["L2"],
+     "text": "Acme monorepo: packages/web, packages/api, packages/db, packages/ui. Turborepo, pnpm workspaces."},
+
+    {"id": "L8", "line": 8, "truth": "KEEP", "severity": "trap", "codes": ["L1", "L2"],
+     "text": "Install: pnpm install at the root. Never install inside a package directory."},
+    {"id": "L9", "line": 9, "truth": "KEEP", "codes": ["L2"], "text": "Build everything: pnpm turbo run build"},
+    {"id": "L10", "line": 10, "truth": "KEEP", "accept": ["KEEP", "MERGE"], "codes": ["L2"],
+     "text": "Test everything: pnpm turbo run test"},
+    {"id": "L11", "line": 11, "truth": "KEEP", "codes": ["L2"],
+     "text": "Run one package's tests: pnpm --filter @acme/api test"},
+    {"id": "L12", "line": 12, "truth": "CUT", "codes": ["N1"], "text": "Always write high-quality, production-ready code."},
+    {"id": "L13", "line": 13, "truth": "CUT", "codes": ["N1", "N2"], "text": "Make sure your changes are well tested."},
+
+    {"id": "L17", "line": 17, "truth": "KEEP", "accept": ["KEEP", "MERGE", "CUT"], "codes": ["N4", "L2"],
+     "text": "Use conventional commits. (duplicates CLAUDE.md)",
+     "note": "Deduplication has to pick a canonical home, and for a repo-wide convention that home is the root AGENTS.md. Keeping this copy and deleting CLAUDE.md:5 is correct; so is the reverse. Verdict on the target file is therefore either KEEP or MERGE — the cross-file MERGE behaviour is measured by L26, L28, L53 and L55."},
+    {"id": "L19", "line": 19, "truth": "KEEP", "severity": "trap", "accept": ["KEEP", "MERGE"], "codes": ["L4", "N4"],
+     "text": "Never commit .env files or anything containing a live credential."},
+
+    {"id": "L23", "line": 23, "line_start": 23, "line_end": 24, "truth": "MERGE",
+     "accept": ["MERGE", "MOVE", "KEEP"], "codes": ["N4", "L4"],
+     "text": "Every handler must call assertSession(req) first — duplicates packages/api/AGENTS.md.",
+     "note": "MERGE down to the nested file is the tidy answer, but this is the only auth enforcement in the codebase and the nested file loads only once the agent is already editing api files. Keeping one redundant line against a silent auth bypass is the trade the taxonomy's consequence-of-failure rule endorses, so KEEP is accepted when the report argues it."},
+    {"id": "L26", "line": 26, "truth": "MERGE", "accept": ["MERGE", "MOVE"], "codes": ["N4"],
+     "text": "Fastify plugins register in packages/api/src/plugins/index.ts in dependency order."},
+    {"id": "L28", "line": 28, "truth": "MERGE", "accept": ["MERGE", "MOVE"], "codes": ["N4"],
+     "text": "The API talks to Postgres only through packages/db. Never import pg in packages/api."},
+
+    {"id": "L32", "line": 32, "line_start": 32, "line_end": 33, "truth": "MOVE", "codes": ["N4", "N7"],
+     "text": "All forms in packages/web use react-hook-form with a zod resolver."},
+    {"id": "L35", "line": 35, "truth": "MOVE", "accept": ["MOVE", "MERGE"], "codes": ["N4"],
+     "text": "Server state in packages/web uses the generated client in packages/web/src/api-client/."},
+
+    {"id": "L39", "line": 39, "line_start": 39, "line_end": 40, "truth": "KEEP", "severity": "trap", "codes": ["L2"],
+     "text": "Migrations: pnpm --filter @acme/db migrate. Generate one with drizzle-kit generate.",
+     "must_keep_nouns": ["pnpm --filter @acme/db migrate"]},
+    {"id": "L42", "line": 42, "truth": "KEEP", "severity": "trap", "codes": ["L6", "L1"],
+     "text": "Never edit a migration that has been merged to main — add a new one."},
+
+    {"id": "L46", "line": 46, "truth": "KEEP", "severity": "trap", "accept": ["KEEP", "TRIM"], "codes": ["L1"],
+     "text": "Formatting is handled by Prettier on commit; do not reformat files by hand."},
+    {"id": "L47", "line": 47, "truth": "CUT", "accept": ["CUT", "TRIM"], "codes": ["N6", "N1"],
+     "text": "Use TypeScript. Avoid any."},
+    {"id": "L48", "line": 48, "truth": "CUT", "codes": ["N1"], "text": "Write clear, self-documenting code."},
+    {"id": "L49", "line": 49, "truth": "CUT", "accept": ["CUT", "TRIM"], "codes": ["N2"], "text": "Keep functions short."},
+
+    {"id": "L53", "line": 53, "truth": "MERGE", "accept": ["MERGE", "CUT"], "codes": ["N4"],
+     "text": "Run pnpm turbo run test before pushing. (duplicates L10 and CLAUDE.md)"},
+    {"id": "L55", "line": 55, "truth": "MERGE", "accept": ["MERGE", "MOVE"], "codes": ["N4"],
+     "text": "Every handler must have a test in packages/api/test/routes/."},
+
+    {"id": "L59", "line": 59, "truth": "CUT", "accept": ["CUT", "MERGE"], "codes": ["N4"],
+     "text": "Remember to use conventional commit messages for all commits."}
+  ]
+}

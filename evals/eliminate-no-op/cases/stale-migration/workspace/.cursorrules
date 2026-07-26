@@ -1,0 +1,19 @@
+# Rules for the checkout service
+
+- Be helpful, thorough, and careful in everything you do.
+- Run `./bin/bootstrap` first to set up the virtualenv.
+- Run tests with `./bin/test`. Integration tests need `docker compose up -d postgres redis`.
+- Onboarding notes are in `docs/onboarding.md`.
+- The deploy runbook is `docs/RUNBOOK.md`. Read it before touching anything under `deploy/`.
+- We are migrating from `requests` to `httpx`. New code must use `httpx`.
+- Do not use Celery for new async work — use `arq`. The remaining Celery tasks are being ported.
+- Keep Python 3.9 compatibility: no `match` statements, no `X | Y` union syntax.
+- Temporary: keep `pydantic` pinned below 2.0 until the v2 migration lands.
+- Feature flags live in `checkout/flags.py`. `NEW_CHECKOUT` is mid-rollout — keep both code
+  paths working until it is at 100%.
+- Money is `Decimal`, never float. Serialise with `checkout/money.py:to_minor_units`.
+- Idempotency keys are required on every write endpoint. `checkout/idempotency.py` has the
+  decorator; a write endpoint without it will be rejected in review.
+- Do not call the payment provider directly in tests. Use `tests/fakes/provider.py`.
+- Write good code and follow best practices.
+- Always double-check your work before finishing.

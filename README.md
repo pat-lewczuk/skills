@@ -38,6 +38,28 @@ five survival tests. It produces a findings report and writes the rewrite *besid
 It is deliberately conservative: deleting a line that was quietly preventing a recurring bug
 costs far more than leaving three redundant lines alone.
 
+## Evals
+
+`evals/eliminate-no-op/` holds the eval suite for that skill: eight labelled cases, weighted
+metrics that punish deleting a load-bearing line three times harder than missing a platitude,
+and a loop that revises the skill from its own failures and keeps a revision only if it holds
+up on cases it was never tuned against.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="evals/eliminate-no-op/docs/results-dark.png">
+  <img src="evals/eliminate-no-op/docs/results-light.png" alt="Eval results dashboard: adjusted suite score 0.9625, zero of 74 load-bearing lines cut, per-case and per-metric scores, suite composition, grader calibration, and the improvement-loop history.">
+</picture>
+
+```bash
+cd evals/eliminate-no-op
+python3 harness/selftest.py     # validate the graders, free
+python3 harness/run.py          # run the suite
+python3 harness/loop.py --iterations 2
+python3 harness/report_html.py  # regenerate results.html + the image above
+```
+
+Details, case-by-case, in [`evals/eliminate-no-op/README.md`](./evals/eliminate-no-op/README.md).
+
 ## License
 
 [MIT](./LICENSE)

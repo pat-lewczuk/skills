@@ -1,0 +1,6 @@
+name: atlas
+version: "1.8.0"
+profile: atlas
+models:
+  atlas:
+    +materialized: table
