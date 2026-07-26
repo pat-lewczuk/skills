@@ -5,6 +5,14 @@ Agent skills for real engineering work.
 These skills are small, easy to adapt, and composable. They work with any model. Hack around
 with them, make them your own.
 
+| Skill | What it does |
+|---|---|
+| [`eliminate-no-op`](./skills/eliminate-no-op) | Audits an instruction file for directives that burn context without changing behavior, and proposes a rewrite beside the original |
+| [`evaluate-skill`](./skills/evaluate-skill) | Builds an eval suite for another skill, runs it, reports — optionally with a loop that revises the skill from its own failures |
+
+The second one measures the first: `evals/eliminate-no-op/` is a real suite with a measured
+baseline, and it is where both skills were shaken out.
+
 ## Install
 
 With the [skills.sh](https://skills.sh) installer:
@@ -18,6 +26,8 @@ Or copy the directory you want straight into your project:
 ```bash
 cp -r skills/eliminate-no-op /path/to/your-project/.claude/skills/
 ```
+
+Scripts are stdlib-only Python 3 — there is no install step, and nothing to keep in sync.
 
 ## Skills
 
@@ -71,6 +81,40 @@ outright (~135 tokens, four of its six lines duplicated the root file), and dire
 Figures are the `len/4` estimate `analyze.py` uses. Files this dense with backticked paths and
 flags tokenize worse than plain prose, so treat the absolutes as ±15%; the ratios hold. Each
 audit cost $0.73–$1.04 and 13–18 turns to produce.
+
+### evaluate-skill
+
+Builds an eval suite for another skill, runs it, and reports — optionally with a loop that
+revises the skill from its own failures.
+
+A skill is a prompt, and a prompt is untested code. The usual way to improve one is to read it,
+decide a paragraph feels weak, and rewrite it. That has no error signal: the edit that makes a
+skill read better and the edit that makes it work better are not the same edit.
+
+Given a skill name it asks three things — what the skill must get right and what it must never
+do, whether you want to supply the cases or have them generated, and whether you want the
+improvement loop. Cases you describe in the chat get converted into real ones, copying the
+workspace from a real project if you point at it; a failure you actually remember is better
+ground truth than anything a model invents.
+
+From there it scaffolds the suite, verifies the instrument against a do-nothing run and a
+perfect run before spending anything, runs it, and writes an HTML dashboard. Ask for the loop
+and it additionally revises the skill, rejects patches that memorised the fixtures, and keeps a
+revision only if it holds up on cases it was never tuned against.
+
+It refuses to start without a named target skill.
+
+```bash
+python3 scripts/scaffold.py --skill my-skill --case happy:train --case restraint:train \
+  --case unseen:holdout --case triggers:train:trigger
+```
+
+The suite it builds scores checks and rubric criteria into weighted metrics, with `safety`
+heaviest — for nearly every skill the expensive failure is confident damage, not a missed
+improvement — and gates that zero a case outright. `selftest.py` is what makes the numbers
+worth reading: it scores a run that produced nothing (must be near zero) against one built to
+satisfy every check (must be near one), so a case that cannot separate those two gets caught
+before you spend anything on it.
 
 ## Evals
 
