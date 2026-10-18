@@ -9,6 +9,7 @@ with them, make them your own.
 |---|---|
 | [`eliminate-no-op`](./skills/eliminate-no-op) | Audits an instruction file for directives that burn context without changing behavior, and proposes a rewrite beside the original |
 | [`evaluate-skill`](./skills/evaluate-skill) | Builds an eval suite for another skill, runs it, reports — optionally with a loop that revises the skill from its own failures |
+| [`task-router`](./skills/task-router) | Turns a repo's agent instructions into a short root `AGENTS.md` with a "when doing X, read Y" table, per-unit `AGENTS.md` files and a check that every route exists |
 
 The second one measures the first: `evals/eliminate-no-op/` is a real suite with a measured
 baseline, and it is where both skills were shaken out.
@@ -115,6 +116,20 @@ improvement — and gates that zero a case outright. `selftest.py` is what makes
 worth reading: it scores a run that produced nothing (must be near zero) against one built to
 satisfy every check (must be near one), so a case that cannot separate those two gets caught
 before you spend anything on it.
+
+### task-router
+
+Turns one growing `AGENTS.md` into a router: the root keeps only what every task needs plus a
+`| Task | Read |` table, and everything else moves next to the code it is about.
+
+Context loaded up front is paid for on every turn, whether the task needs it or not. Routing
+loads a module's rules only when the agent works in that module, and keeps them closer to the
+code, so they drift less.
+
+It works in five steps — discover, split, route, check, report — and moves rules rather than
+copying them. Every routed path must exist; the skill adds a small dependency-free script that
+fails when a route points nowhere or a file outgrows its budget (root ≤ 150 lines, unit ≤ 120).
+It does not touch hooks, skills, specs, product code or commits.
 
 ## Evals
 
