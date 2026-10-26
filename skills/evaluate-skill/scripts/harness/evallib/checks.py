@@ -223,7 +223,7 @@ def _tool_hits(spec, ctx) -> list:
     pat = re.compile(spec["input_pattern"], re.I) if spec.get("input_pattern") else None
     out = []
     for c in ctx.tool_calls():
-        if spec.get("name") and c.get("name") != spec["name"]:
+        if spec.get("name") not in (None, "", "*") and c.get("name") != spec["name"]:
             continue
         blob = json.dumps(c.get("input", {}))
         if pat and not pat.search(blob):

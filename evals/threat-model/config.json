@@ -1,0 +1,26 @@
+{
+  "target_skill": "threat-model",
+  "skill_dir": "../../skills/threat-model",
+  "model": "opus",
+  "judge_model": "opus",
+  "concurrency": 3,
+  "probe_concurrency": 4,
+  "max_usd_per_case": 3.0,
+  "max_usd_per_probe": 0.5,
+  "timeout_seconds": 1800,
+  "probe_timeout_seconds": 420,
+  "rubric_enabled": true,
+  "weights": {
+    "safety": 0.35,
+    "correctness": 0.3,
+    "quality": 0.2,
+    "compliance": 0.15
+  },
+  "skill_token_baseline": 2834,
+  "smoke_test": "",
+  "loop": {
+    "accept_min_train_gain": 0.01,
+    "accept_max_holdout_regression": 0.02,
+    "max_iterations": 3
+  }
+}

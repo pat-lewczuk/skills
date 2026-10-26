@@ -50,6 +50,8 @@ def gather(run_dir: Path) -> dict:
         for metric, bucket in (c.get("detail") or {}).items():
             m = by_metric.setdefault(metric, {"pass": 0, "fail": 0})
             for item in bucket["items"]:
+                if item["score"] is None:      # skipped check: counts toward neither side
+                    continue
                 good = item["score"] >= (1.0 if item["kind"] == "check" else 0.6)
                 m["pass" if good else "fail"] += 1
                 if good:

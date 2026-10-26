@@ -1,0 +1,21 @@
+flowchart LR
+  subgraph internet [Untrusted: internet]
+    Client[Web client / user]
+    Attacker[User of another account]
+  end
+  subgraph app [Trusted: ledgerly-api]
+    Login(POST /login)
+    API(Invoice routes)
+  end
+  subgraph data [Trusted: data]
+    DB[(Postgres)]
+  end
+  Client -->|"email, password (T-05)"| Login
+  Login -->|"JWT (T-01)"| Client
+  Client -->|"bearer JWT, invoice data (T-02, T-07)"| API
+  Attacker -->|"forged invoice IDs (T-03)"| API
+  API -->|"queries scoped by account_id (T-02, T-03)"| DB
+  API -->|"error responses (T-06)"| Client
+  Login -->|credential lookup| DB
+  classDef boundary stroke-dasharray: 5 5
+  class internet,app,data boundary

@@ -10,6 +10,7 @@ with them, make them your own.
 | [`eliminate-no-op`](./skills/eliminate-no-op) | Audits an instruction file for directives that burn context without changing behavior, and proposes a rewrite beside the original |
 | [`evaluate-skill`](./skills/evaluate-skill) | Builds an eval suite for another skill, runs it, reports — optionally with a loop that revises the skill from its own failures |
 | [`task-router`](./skills/task-router) | Turns a repo's agent instructions into a short root `AGENTS.md` with a "when doing X, read Y" table, per-unit `AGENTS.md` files and a check that every route exists |
+| [`threat-model`](./skills/threat-model) | Discovers what a repo actually runs, then writes a STRIDE threat model with a trust-boundary diagram, OWASP mapping and a security test scope — and never runs the attacks |
 
 The second one measures the first: `evals/eliminate-no-op/` is a real suite with a measured
 baseline, and it is where both skills were shaken out.
@@ -131,6 +132,17 @@ copying them. Every routed path must exist; the skill adds a small dependency-fr
 fails when a route points nowhere or a file outgrows its budget (root ≤ 150 lines, unit ≤ 120).
 It does not touch hooks, skills, specs, product code or commits.
 
+### threat-model
+
+Writes `docs/security/threat-model.md` and a Mermaid data flow diagram for whatever the
+repository contains — web app, API, queue worker, CLI, AI agent — by first inventorying the
+deployable units and reading their routes, auth and data access, then walking every boundary
+crossing through all six STRIDE letters. AI components get a lethal-trifecta / Rule of Two
+verdict. Every threat carries an OWASP ID and a concrete "how we verify", which becomes the
+test scope a tester or pentest agent starts from. An existing model is updated, not
+regenerated: IDs, accepted risks and the changelog survive. It produces a plan; it never runs
+attacks, scans or exploit code.
+
 ## Evals
 
 `evals/eliminate-no-op/` holds the eval suite for that skill: eight labelled cases, weighted
@@ -152,6 +164,11 @@ python3 harness/report_html.py  # regenerate results.html + the image above
 ```
 
 Details, case-by-case, in [`evals/eliminate-no-op/README.md`](./evals/eliminate-no-op/README.md).
+
+`evals/threat-model/` is a second suite, built with `evaluate-skill`: five cases on small
+fixture repos with planted, known-answer flaws (Next.js + chatbot, FastAPI + Celery, Express
+with an existing model, a Go service where the user asks for the attacks to be run), plus a
+trigger probe set. See [`evals/threat-model/README.md`](./evals/threat-model/README.md).
 
 ## License
 

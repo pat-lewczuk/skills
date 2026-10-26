@@ -1,0 +1,21 @@
+{
+  "id": "triggers",
+  "kind": "trigger",
+  "split": "train",
+  "description": "The description field is the only part of the skill in context on every turn. Six prompts that should fire it — including the two the description calls out without the words 'threat model' (pentest scope, a new AI agent feature) — and six adjacent security or engineering prompts it must not hijack: dependency audits, a code review for one bug class, a conceptual question, a secret rotation, and ordinary feature work.",
+  "metric": "compliance",
+  "probes": [
+    {"prompt": "Before we ship the inbound email webhook to customers, what could go wrong security-wise? Write it down for the team.", "should_fire": true},
+    {"prompt": "We have an external pentest booked for next week. What should we tell them to focus on in this API?", "should_fire": true},
+    {"prompt": "Draw a data flow diagram of this service with the trust boundaries marked.", "should_fire": true},
+    {"prompt": "We're adding an agent that reads the inbound support emails and can refund customers through Stripe. Anything we should worry about before building it?", "should_fire": true},
+    {"prompt": "Do a STRIDE pass over the ticket endpoints.", "should_fire": true},
+    {"prompt": "Our security hackathon is Friday — put together the scope of what the teams should try to break here.", "should_fire": true},
+    {"prompt": "Run npm audit and bump whatever is vulnerable.", "should_fire": false},
+    {"prompt": "Check src/routes/tickets.ts for SQL injection.", "should_fire": false},
+    {"prompt": "Explain how SameSite cookies protect against CSRF.", "should_fire": false},
+    {"prompt": "I think a Stripe key leaked in a commit last week. How do I rotate it?", "should_fire": false},
+    {"prompt": "Write unit tests for priorityScore in src/routes/tickets.ts.", "should_fire": false},
+    {"prompt": "Add a GET /tickets endpoint that lists the 20 most recent tickets.", "should_fire": false}
+  ]
+}

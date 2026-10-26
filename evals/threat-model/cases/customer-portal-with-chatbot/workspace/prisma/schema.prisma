@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model Organization {
+  id        String     @id @default(cuid())
+  name      String
+  users     User[]
+  requests  Request[]
+  documents Document[]
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  passwordHash   String
+  role           Role         @default(MEMBER)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  requests       Request[]
+}
+
+model Request {
+  id             String       @id @default(cuid())
+  title          String
+  body           String
+  status         String       @default("open")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdById    String
+  createdBy      User         @relation(fields: [createdById], references: [id])
+  documents      Document[]
+  createdAt      DateTime     @default(now())
+}
+
+model Document {
+  id             String       @id @default(cuid())
+  filename       String
+  storageKey     String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  requestId      String?
+  request        Request?     @relation(fields: [requestId], references: [id])
+  createdAt      DateTime     @default(now())
+}

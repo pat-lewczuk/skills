@@ -30,7 +30,7 @@ Contents:
 | `file_size_ratio` | `path`, `vs`, `min`, `max` | size relative to another file is inside the band |
 | `json_valid` | `path`, `required_keys` | parses, and has the keys |
 | `command` | `run`, `expect_exit` | the command exits as expected, run in the sandbox |
-| `tool_used` | `name`, `input_pattern` | the transcript shows that tool call |
+| `tool_used` | `name` (`*` for any tool), `input_pattern` | the transcript shows that tool call |
 | `tool_not_used` | `name`, `input_pattern` | it never happened |
 | `skill_fired` / `skill_not_fired` | — | the skill under test was invoked |
 | `files_created_max` | `n`, `ignore` | no more than `n` unexpected files appeared |
