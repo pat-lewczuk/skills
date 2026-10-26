@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .
+    command: uvicorn docproc.api.main:app --host 0.0.0.0 --port 8000
+    ports: ["8000:8000"]
+    environment: &env
+      DATABASE_URL: postgresql+psycopg://docproc:docproc@postgres:5432/docproc
+      BROKER_URL: redis://redis:6379/0
+      UPLOAD_DIR: /data/uploads
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    volumes: ["uploads:/data/uploads"]
+  worker:
+    build: .
+    command: celery -A docproc.worker.tasks worker --loglevel=info
+    environment: *env
+    volumes: ["uploads:/data/uploads"]
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: docproc
+      POSTGRES_PASSWORD: docproc
+volumes:
+  uploads: {}

@@ -89,13 +89,13 @@ def judge_case(case: dict, artifacts: dict, check_results: list, sandbox_files: 
 
     blobs = []
     for name, text in list(sandbox_files.items())[:12]:
-        blobs.append(f"--- {name} ---\n{text[:6000]}")
+        blobs.append(f"--- {name} ---\n{text[:30000]}")
     artifact_text = "\n\n".join(blobs) or "(the run produced no files)"
 
     result = agent.structured_call(
         PROMPT.format(prompt=case.get("prompt", ""),
                       description=case.get("description", "(not stated)"),
-                      facts=facts, artifacts=artifact_text[:40000],
+                      facts=facts, artifacts=artifact_text[:80000],
                       output=(artifacts.get("final_text") or "")[:8000],
                       criteria=criteria),
         SCHEMA, model=model, cwd=cwd)
